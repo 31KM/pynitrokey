@@ -476,24 +476,31 @@ try:  # noqa: C901
         "--path",
         type=click.Path(allow_dash=True),
         default="-",
-        help="Path to the .pem file containing the private key",
+        help="Path to the .p12 file containing the private key",
+    )
+    @click.option(
+        "--password",
+        type=click.STRING,
+        default=None,
+        help="Password to load the .p12 file",
     )
     def import_key(
         admin_key: str,
         key: str,
         path: str,
+        password: str,
     ) -> None:
         try:
             admin_key_bytes = bytearray.fromhex(admin_key)
         except ValueError:
             local_critical(
-                "Key is expected to be an hexadecimal string",
+                "Admin-Key is expected to be an hexadecimal string",
                 support_hint=False,
             )
 
         with open(path, "rb") as key_file:
             private_key, certificate, _ = pkcs12.load_key_and_certificates(
-                key_file.read(), password=None
+                key_file.read(), password
             )
         if (
             not isinstance(private_key, rsa.RSAPrivateKey)
