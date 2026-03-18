@@ -500,7 +500,7 @@ try:  # noqa: C901
 
         with open(path, "rb") as key_file:
             private_key, certificate, _ = pkcs12.load_key_and_certificates(
-                key_file.read(), password
+                key_file.read(), password.encode('utf-8') if password else None
             )
         if (
             not isinstance(private_key, rsa.RSAPrivateKey)
